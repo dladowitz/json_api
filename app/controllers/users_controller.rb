@@ -2,7 +2,19 @@ class UsersController < ApplicationController
   respond_to :json
 
   def index
-    @users = User.all
+    before = params[:before]
+    after = params[:after]
+
+    if before && after
+      @users = User.where(birthdate: after..before)
+    elsif before
+      @users = User.where("birthdate < ?", before)
+    elsif after
+      @users = User.where("birthdate > ?", after)
+    else
+      @users = User.all
+    end
+
     render json: @users
   end
 
